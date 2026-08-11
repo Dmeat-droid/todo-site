@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>ToDo Site</title>
+</head>
+<body>
+  <h1>ToDo Site</h1>
+  <form id="todo-form">
+    <input type="text" id="todo-input" required />
+    <input type="submit" id="todo-submit">
+  </form>
+  <ul id="list-container"></ul>
+  <script>
+    "use strict";
+
+    // Access element in html
+    const form = document.getElementById("todo-form");
+    const textInput = document.getElementById("todo-input");
+    const list = document.getElementById("list-container");
+        
+    let todos = JSON.parse(localStorage.getItem("todos") || "[]");
+    if(!todos.length) todos = [{ id: 1, text: "Learn Javascript", completed: false}];
+
+    //render list
+    function renderTodos() {
+      list.innerHTML = "";
+      todos.forEach(element => {
+        const li = document.createElement("li");
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = element.completed;
+        cb.addEventListener("change", () => {
+          element.completed = cb.checked;
+          saveAndRender();
+        });
+        li.appendChild(cb);
+        li.appendChild(document.createTextNode(" " + element.text));
+        list.appendChild(li);
+      });
+    }
+
+    function saveAndRender() {
+      localStorage.setItem("todos", JSON.stringify(todos));
+      renderTodos();
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = textInput.value.trim();
+      if (!text) {
+        console.log("Input value is null!");
+        return;
+      }
+      todos.push({ id: Date.now(), text, completed: false });
+      textInput.value = "";
+      saveAndRender();
+    });
+
+    // disable submit when its empty
+    textInput.addEventListener("input", () => {
+      const submitBtn = document.getElementById("todo-submit");
+      if (submitBtn) submitBtn.disabled = !textInput.value.trim();
+    });
+
+  </script>
+</body>
