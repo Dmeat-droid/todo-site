@@ -69,3 +69,25 @@ textInput.addEventListener("input", () => {
   const submitBtn = document.getElementById("todo-submit");
   if (submitBtn) submitBtn.disabled = !textInput.value.trim();
 });
+
+// Function marked as 'async' returns a promise automatically
+async function getUserByID(id) {
+  try {
+    // Pause execution til the fetch promise resolves
+    const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+    
+    // Check if the HTTP status is in safe range
+    if (!response.ok){
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+
+    // Use the fetched data
+    const post = await response.json();
+    console.log(`${post.name} works at ${post.company.name}`);
+  } catch(error){
+    console.error("Failed to fetch post:", error.message);
+  }
+}
+
+getUserByID(2);
+getUserByID(999);
